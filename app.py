@@ -1,12 +1,35 @@
 import streamlit as st
-from db import init_db, run_query, fetch_all
+from db import init_db, run_query, fetch_all, insert_and_get_id
 import pandas as pd
 from datetime import datetime, date
 from fpdf import FPDF
-import io
 
 st.set_page_config(page_title="Gabinet lekarski", layout="wide")
 init_db()
+
+# Minimalny „ZnanyLekarz-like” styl
+st.markdown("""
+<style>
+div[data-testid="stSidebar"] {
+    background-color: #00a39b;
+}
+div[data-testid="stSidebar"] * {
+    color: white !important;
+}
+.block-container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+h1, h2, h3 {
+    color: #13536b;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# stan dla szablonów
+for key in ["interview_text", "examination_text", "recommendations_text"]:
+    if key not in st.session_state:
+        st.session_state[key] = ""
 
 # ------------------------
 # Helper: wyszukiwanie ICD
@@ -81,6 +104,7 @@ menu = st.sidebar.radio(
         "Nowa wizyta",
         "Wizyty – przegląd/edycja",
         "Kalendarz wizyt",
+        "Szablony tekstów",
     ]
 )
 
@@ -188,7 +212,7 @@ elif menu == "Lista pacjentów":
             st.table(visits)
 
 # ------------------------
-# NOWA WIZYTA – FORMULARZ
+# NOWA WIZYTA – FORMULARZ (z szablonami + leki: lek/dawka/dawkowanie)
 # ------------------------
 elif menu == "Nowa wizyta":
     st.title("Nowa wizyta")
@@ -203,41 +227,83 @@ elif menu == "Nowa wizyta":
             format_func=lambda p: f"{p.last_name} {p.first_name} ({p.pesel})",
         )
 
+        # szablony
+        tpl_int = fetch_all("SELECT id, name, content FROM templates WHERE type = 'interview'")
+        tpl_exam = fetch_all("SELECT id, name, content FROM templates WHERE type = 'examination'")
+        tpl_rec = fetch_all("SELECT id, name, content FROM templates WHERE type = 'recommendations'")
+
+        col_t1, col_t2, col_t3 = st.columns(3)
+        with col_t1:
+            if not tpl_int.empty:
+                opt = ["(brak)"] + tpl_int["name"].tolist()
+                ch = st.selectbox("Szablon wywiadu", opt, key="tpl_int_sel")
+                if ch != "(brak)":
+                    st.session_state["interview_text"] = tpl_int.loc[tpl_int["name"] == ch, "content"].iloc[0]
+        with col_t2:
+            if not tpl_exam.empty:
+                opt = ["(brak)"] + tpl_exam["name"].tolist()
+                ch = st.selectbox("Szablon badania", opt, key="tpl_exam_sel")
+                if ch != "(brak)":
+                    st.session_state["examination_text"] = tpl_exam.loc[tpl_exam["name"] == ch, "content"].iloc[0]
+        with col_t3:
+            if not tpl_rec.empty:
+                opt = ["(brak)"] + tpl_rec["name"].tolist()
+                ch = st.selectbox("Szablon zaleceń", opt, key="tpl_rec_sel")
+                if ch != "(brak)":
+                    st.session_state["recommendations_text"] = tpl_rec.loc[tpl_rec["name"] == ch, "content"].iloc[0]
+
         with st.form("new_visit_form"):
             st.markdown(f"**Pacjent:** {selected.first_name} {selected.last_name} ({selected.pesel})")
 
-            interview = st.text_area("Wywiad", height=120)
-            examination = st.text_area("Badanie", height=120)
-            medications = st.text_area("Leki")
-            recommendations = st.text_area("Zalecenia")
+            interview = st.text_area("Wywiad", height=120, key="interview_text")
+            examination = st.text_area("Badanie", height=120, key="examination_text")
+
+            st.markdown("### Leki")
+            meds_data = []
+            for i in range(3):
+                st.markdown(f"**Lek {i+1}**")
+                c1, c2, c3 = st.columns([2, 1, 2])
+                with c1:
+                    name = st.text_input("Lek", key=f"med_name_{i}")
+                with c2:
+                    dose = st.text_input("Dawka", key=f"med_dose_{i}")
+                with c3:
+                    sched = st.text_input("Dawkowanie", key=f"med_sched_{i}")
+                if name or dose or sched:
+                    meds_data.append((name, dose, sched))
+                st.markdown("")
+
+            recommendations = st.text_area("Zalecenia", key="recommendations_text")
 
             st.markdown("### Rozpoznania ICD-10")
-
             dx_entries = []
             for i in range(3):
                 st.markdown(f"**Rozpoznanie {i+1}**")
                 q = st.text_input(f"Szukaj kodu / nazwy ({i+1})", key=f"icd_search_{i}")
                 results = search_icd(q) if q else pd.DataFrame()
-
                 if not results.empty:
                     st.dataframe(results, use_container_width=True, height=150)
 
                 code = st.text_input(f"Kod ICD ({i+1})", key=f"icd_code_{i}")
                 name = st.text_input(f"Nazwa ICD ({i+1})", key=f"icd_name_{i}")
                 primary = st.checkbox("Główne rozpoznanie", key=f"icd_primary_{i}", value=(i == 0))
-
                 if code and name:
                     dx_entries.append((code, name, primary))
-
                 st.markdown("---")
 
             submitted = st.form_submit_button("Zapisz wizytę")
 
             if submitted:
-                if not interview and not examination and not dx_entries:
+                if not interview and not examination and not dx_entries and not meds_data:
                     st.error("Wypełnij przynajmniej część danych wizyty.")
                 else:
-                    run_query(
+                    meds_text = "\n".join(
+                        f"{n} – {d} – {s}".strip(" –")
+                        for (n, d, s) in meds_data
+                        if (n or d or s)
+                    )
+
+                    visit_id = insert_and_get_id(
                         """
                         INSERT INTO visits (patient_id, date, interview, examination, medications, recommendations)
                         VALUES (?, ?, ?, ?, ?, ?)
@@ -247,11 +313,10 @@ elif menu == "Nowa wizyta":
                             datetime.now().isoformat(),
                             interview,
                             examination,
-                            medications,
+                            meds_text,
                             recommendations,
                         ),
                     )
-                    visit_id = fetch_all("SELECT last_insert_rowid() AS id")["id"][0]
 
                     for code, name, primary in dx_entries:
                         run_query(
@@ -352,7 +417,7 @@ elif menu == "Wizyty – przegląd/edycja":
         st.write(visit_details["examination"])
 
         st.markdown("**Leki:**")
-        st.write(visit_details["medications"])
+        st.write((visit_details["medications"] or "").replace("\n", "  \n"))
 
         st.markdown("**Zalecenia:**")
         st.write(visit_details["recommendations"])
@@ -366,15 +431,14 @@ elif menu == "Wizyty – przegląd/edycja":
         )
 
         st.markdown("---")
-        st.subheader("Edycja wizyty")
+        st.subheader("Edycja wizyty (tekstowo)")
 
         with st.form("edit_visit_form"):
             interview_edit = st.text_area("Wywiad", value=visit_details["interview"] or "", height=120)
             exam_edit = st.text_area("Badanie", value=visit_details["examination"] or "", height=120)
-            meds_edit = st.text_area("Leki", value=visit_details["medications"] or "")
+            meds_edit = st.text_area("Leki (wolny tekst)", value=visit_details["medications"] or "")
             rec_edit = st.text_area("Zalecenia", value=visit_details["recommendations"] or "")
 
-            st.markdown("**Rozpoznania (nadpisanie listy):**")
             dx_codes = []
             dx_names = []
             dx_primary_idx = 0
@@ -497,7 +561,60 @@ elif menu == "Kalendarz wizyt":
         st.write(visit_details["examination"])
 
         st.markdown("**Leki:**")
-        st.write(visit_details["medications"])
+        st.write((visit_details["medications"] or "").replace("\n", "  \n"))
 
         st.markdown("**Zalecenia:**")
         st.write(visit_details["recommendations"])
+
+        pdf_bytes = generate_visit_pdf(visit_details, diagnoses)
+        st.download_button(
+            "Pobierz PDF wizyty",
+            data=pdf_bytes,
+            file_name=f"wizyta_{selected_visit.id}.pdf",
+            mime="application/pdf",
+        )
+
+# ------------------------
+# SZABLONY TEKSTÓW
+# ------------------------
+elif menu == "Szablony tekstów":
+    st.title("Szablony wywiadu / badania / zaleceń")
+
+    st.subheader("Dodaj nowy szablon")
+    with st.form("new_template_form"):
+        t_type_label = st.selectbox("Rodzaj", ["Wywiad", "Badanie", "Zalecenia"])
+        t_name = st.text_input("Nazwa szablonu")
+        t_content = st.text_area("Treść szablonu", height=200)
+        submitted_tpl = st.form_submit_button("Zapisz szablon")
+
+        if submitted_tpl:
+            type_map = {
+                "Wywiad": "interview",
+                "Badanie": "examination",
+                "Zalecenia": "recommendations",
+            }
+            t_type = type_map[t_type_label]
+            run_query(
+                "INSERT INTO templates (type, name, content) VALUES (?, ?, ?)",
+                (t_type, t_name, t_content),
+            )
+            st.success("Szablon zapisany.")
+
+    st.subheader("Istniejące szablony")
+    all_tpl = fetch_all("SELECT id, type, name, content FROM templates ORDER BY type, name")
+    if all_tpl.empty:
+        st.info("Brak szablonów.")
+    else:
+        type_names = {
+            "interview": "Wywiad",
+            "examination": "Badanie",
+            "recommendations": "Zalecenia",
+        }
+        for t_type in ["interview", "examination", "recommendations"]:
+            subset = all_tpl[all_tpl["type"] == t_type]
+            if subset.empty:
+                continue
+            st.markdown(f"### {type_names.get(t_type, t_type)}")
+            for _, row in subset.iterrows():
+                with st.expander(row["name"]):
+                    st.write(row["content"])
