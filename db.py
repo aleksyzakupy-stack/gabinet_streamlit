@@ -1,6 +1,5 @@
 import sqlite3
 import pandas as pd
-from datetime import datetime
 
 DB_PATH = "clinic.db"
 
@@ -9,7 +8,6 @@ def init_db():
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
-    # pacjenci
     c.execute("""
         CREATE TABLE IF NOT EXISTS patients (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,7 +21,6 @@ def init_db():
         )
     """)
 
-    # wizyty
     c.execute("""
         CREATE TABLE IF NOT EXISTS visits (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,7 +34,6 @@ def init_db():
         )
     """)
 
-    # rozpoznania ICD-10
     c.execute("""
         CREATE TABLE IF NOT EXISTS diagnoses (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,6 +42,23 @@ def init_db():
             icd_name TEXT,
             is_primary INTEGER DEFAULT 0,
             FOREIGN KEY(visit_id) REFERENCES visits(id)
+        )
+    """)
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS icd10 (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            code TEXT UNIQUE,
+            name TEXT
+        )
+    """)
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS templates (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            type TEXT NOT NULL,   -- 'interview', 'examination', 'recommendations'
+            name TEXT NOT NULL,
+            content TEXT NOT NULL
         )
     """)
 
@@ -59,6 +72,16 @@ def run_query(query, params=()):
     c.execute(query, params)
     conn.commit()
     conn.close()
+
+
+def insert_and_get_id(query, params=()):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute(query, params)
+    conn.commit()
+    last_id = c.lastrowid
+    conn.close()
+    return last_id
 
 
 def fetch_all(query, params=()):
