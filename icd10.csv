@@ -1,0 +1,213 @@
+code,name
+F00,Dementia in Alzheimer's disease
+F00.0,Dementia in Alzheimer's disease with early onset
+F00.1,Dementia in Alzheimer's disease with late onset
+F00.2,Dementia in Alzheimer's disease, atypical or mixed type
+F00.9,Dementia in Alzheimer's disease, unspecified
+F01,Vascular dementia
+F01.0,Multi-infarct dementia
+F01.1,Subcortical vascular dementia
+F01.2,Mixed cortical and subcortical vascular dementia
+F01.3,Other vascular dementia
+F01.9,Vascular dementia, unspecified
+F02,Dementia in other diseases classified elsewhere
+F02.0,Dementia in Pick's disease
+F02.1,Dementia in Creutzfeldt-Jakob disease
+F02.2,Dementia in Huntington's disease
+F02.3,Dementia in Parkinson's disease
+F02.4,Dementia in HIV disease
+F02.8,Dementia in other specified diseases
+F03,Unspecified dementia
+
+F04,Organic amnesic syndrome, not induced by alcohol or other psychoactive substances
+F05,Delirium not induced by alcohol and other psychoactive substances
+F05.0,Delirium without dementia
+F05.1,Delirium superimposed on dementia
+F05.8,Other delirium
+F05.9,Delirium, unspecified
+
+F06,Other mental disorders due to brain damage and dysfunction and to physical disease
+F06.0,Organic hallucinosis
+F06.1,Organic catatonic disorder
+F06.2,Organic delusional disorder
+F06.3,Organic mood disorder
+F06.4,Organic anxiety disorder
+F06.5,Organic dissociative disorder
+F06.6,Organic emotionally labile disorder
+F06.7,Mild cognitive disorder
+F06.8,Other specified mental disorders due to brain damage and dysfunction
+F06.9,Unspecified mental disorder due to brain damage and dysfunction
+
+F07,Personality and behavioural disorders due to brain disease, damage and dysfunction
+F07.0,Organic personality disorder
+F07.1,Postencephalitic syndrome
+F07.2,Postconcussional syndrome
+F07.8,Other organic personality and behavioural disorders due to brain damage and dysfunction
+F07.9,Unspecified organic personality and behavioural disorder
+
+F10,Mental and behavioural disorders due to use of alcohol
+F10.0,Acute intoxication
+F10.1,Harmful use
+F10.2,Dependence syndrome
+F10.3,Withdrawal state
+F10.4,Withdrawal state with delirium
+F10.5,Psychotic disorder
+F10.6,Amnesic syndrome
+F10.7,Residual and late-onset psychotic disorder
+F10.8,Other
+F10.9,Unspecified
+
+F11,Mental and behavioural disorders due to use of opioids
+F12,Mental and behavioural disorders due to use of cannabinoids
+F13,Mental and behavioural disorders due to use of sedatives or hypnotics
+F14,Mental and behavioural disorders due to use of cocaine
+F15,Mental and behavioural disorders due to use of other stimulants
+F16,Mental and behavioural disorders due to use of hallucinogens
+F17,Mental and behavioural disorders due to use of tobacco
+F18,Mental and behavioural disorders due to use of volatile solvents
+F19,Mental and behavioural disorders due to multiple drug use
+
+F20,Schizophrenia
+F20.0,Paranoid schizophrenia
+F20.1,Hebephrenic schizophrenia
+F20.2,Catatonic schizophrenia
+F20.3,Undifferentiated schizophrenia
+F20.4,Post-schizophrenic depression
+F20.5,Residual schizophrenia
+F20.6,Simple schizophrenia
+F20.8,Other schizophrenia
+F20.9,Schizophrenia unspecified
+
+F21,Schizotypal disorder
+F22,Persistent delusional disorders
+F22.0,Delusional disorder
+F22.8,Other persistent delusional disorders
+F22.9,Persistent delusional disorder unspecified
+
+F23,Acute and transient psychotic disorders
+F23.0,Acute polymorphic psychotic disorder without symptoms of schizophrenia
+F23.1,Acute polymorphic psychotic disorder with symptoms of schizophrenia
+F23.2,Acute schizophrenia-like psychotic disorder
+F23.3,Other acute predominantly delusional psychotic disorder
+F23.9,Acute psychotic disorder unspecified
+
+F24,Induced delusional disorder
+F25,Schizoaffective disorders
+F25.0,Schizoaffective disorder manic type
+F25.1,Schizoaffective disorder depressive type
+F25.2,Schizoaffective disorder mixed type
+F25.8,Other schizoaffective disorders
+F25.9,Schizoaffective disorder unspecified
+
+F30,Manic episode
+F30.0,Hypomania
+F30.1,Mania without psychotic symptoms
+F30.2,Mania with psychotic symptoms
+F30.8,Other manic episodes
+F30.9,Manic episode unspecified
+
+F31,Bipolar affective disorder
+F31.0,Current episode hypomanic
+F31.1,Current episode manic without psychotic symptoms
+F31.2,Current episode manic with psychotic symptoms
+F31.3,Current episode mild or moderate depression
+F31.4,Current episode severe depression without psychotic symptoms
+F31.5,Current episode severe depression with psychotic symptoms
+F31.6,Current episode mixed
+F31.7,Currently in remission
+F31.8,Other bipolar disorders
+F31.9,Bipolar affective disorder unspecified
+
+F32,Depressive episode
+F32.0,Mild depressive episode
+F32.1,Moderate depressive episode
+F32.2,Severe depressive episode without psychotic symptoms
+F32.3,Severe depressive episode with psychotic symptoms
+F32.8,Other depressive episodes
+F32.9,Depressive episode unspecified
+
+F33,Recurrent depressive disorder
+F33.0,Current episode mild
+F33.1,Current episode moderate
+F33.2,Current episode severe without psychotic symptoms
+F33.3,Current episode severe with psychotic symptoms
+F33.4,Recurrent depressive disorder currently in remission
+F33.8,Other recurrent depressive disorders
+F33.9,Recurrent depressive disorder unspecified
+
+F34,Persistent mood disorders
+F34.0,Cyclothymia
+F34.1,Dysthymia
+F34.8,Other persistent mood disorders
+F34.9,Persistent mood disorder unspecified
+
+F40,Phobic anxiety disorders
+F40.0,Agoraphobia
+F40.1,Social phobias
+F40.2,Specific phobias
+F40.8,Other phobic anxiety disorders
+F40.9,Phobic anxiety disorder unspecified
+
+F41,Other anxiety disorders
+F41.0,Panic disorder
+F41.1,Generalized anxiety disorder
+F41.2,Mixed anxiety and depressive disorder
+F41.3,Other mixed anxiety disorders
+F41.8,Other specified anxiety disorders
+F41.9,Anxiety disorder unspecified
+
+F43,Reaction to severe stress and adjustment disorders
+F43.0,Acute stress reaction
+F43.1,Post-traumatic stress disorder
+F43.2,Adjustment disorders
+F43.8,Other reaction to severe stress
+F43.9,Reaction to severe stress unspecified
+
+F44,Dissociative disorders
+F44.0,Dissociative amnesia
+F44.1,Dissociative fugue
+F44.2,Dissociative stupor
+F44.3,Trance and possession disorders
+F44.4,Dissociative motor disorders
+F44.5,Dissociative convulsions
+F44.6,Dissociative anaesthesia and sensory loss
+F44.7,Mixed dissociative disorders
+F44.8,Other dissociative disorders
+F44.9,Dissociative disorder unspecified
+
+F45,Somatoform disorders
+F45.0,Somatization disorder
+F45.1,Undifferentiated somatoform disorder
+F45.2,Hypochondriacal disorder
+F45.3,Somatoform autonomic dysfunction
+F45.4,Persistent somatoform pain disorder
+F45.8,Other somatoform disorders
+F45.9,Somatoform disorder unspecified
+
+F48,Other neurotic disorders
+F48.0,Neurasthenia
+F48.1,Depersonalization-derealization syndrome
+F48.8,Other neurotic disorders
+F48.9,Neurotic disorder unspecified
+
+F50, Eating disorders
+F50.0,Anorexia nervosa
+F50.1,Atypical anorexia nervosa
+F50.2,Bulimia nervosa
+F50.3,Atypical bulimia nervosa
+F50.4,Overeating associated with other psychological disturbances
+F50.5,Vomiting associated with psychological disturbances
+F50.8,Other eating disorders
+F50.9,Eating disorder unspecified
+
+F51,Nonorganic sleep disorders
+
+F52,Sexual dysfunctions not caused by organic disorder
+
+F53,Mental disorders associated with puerperium
+
+F54,Psychological and behavioural factors associated with disorders or diseases classified elsewhere
+
+F55,Abuse of non-dependence-producing substances
+
+F59,Unspecified behavioural syndromes associated with physiological disturbances
