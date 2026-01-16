@@ -1,0 +1,1 @@
+"""Gabinet Streamlit application package."""
