@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gabinet-streamlit"
+version = "0.1.0"
+description = "Gabinet lekarski Streamlit app"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "streamlit",
+    "pandas",
+    "fpdf2",
+]
+
+[project.scripts]
+gabinet-streamlit = "gabinet_streamlit.cli:main"
+
+[tool.setuptools]
+packages = ["gabinet_streamlit"]
